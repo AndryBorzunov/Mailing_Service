@@ -1,6 +1,8 @@
-from telnetlib import STATUS
+import datetime
 
 from django.db import models
+
+from users.models import User
 
 
 STATUS_CHOICES = [
@@ -33,6 +35,13 @@ class RecipientMail(models.Model):
         help_text="Напишите комментарий"
     )
 
+    class Meta:
+        verbose_name = "Получатель рассылки"
+        verbose_name_plural = "Получатели рассылки"
+
+    def __str__(self):
+        return self.email_address
+
 
 class Message(models.Model):
     theme = models.CharField(
@@ -46,13 +55,20 @@ class Message(models.Model):
         help_text="Напишите сообщение"
     )
 
+    class Meta:
+        verbose_name = "Сообщение"
+        verbose_name_plural = "Сообщения"
+
+    def __str__(self):
+        return self.theme
+
 
 class Dispatch(models.Model):
-    start_at = models.DateTimeField(
+    start_time = models.DateTimeField(
         verbose_name="Дата и время первой отправки"
     )
 
-    stop_at = models.DateTimeField(
+    end_time = models.DateTimeField(
         verbose_name="Дата и время окончания отправки"
     )
 
@@ -73,6 +89,28 @@ class Dispatch(models.Model):
 
     recipients = models.ManyToManyField(RecipientMail)
 
+    owner = models.ForeignKey(User, verbose_name="Владелец", help_text="Укажите владельца рассылки", blank=True, null=True, on_delete=models.SET_NULL)
+
+    class Meta:
+        verbose_name = "Рассылка"
+        verbose_name_plural = "Рассылки"
+
+    def __str__(self):
+        return self.status
+
+    def update_status(self):
+        current_time = datetime.datetime.now()
+
+        if self.start_time <= current_time <= self.end_time:
+            status = STATUS_CHOICES[2]
+        elif current_time > self.end_time:
+            status = STATUS_CHOICES[0]
+        else:
+            status = STATUS_CHOICES[1]
+
+        if self.status != status:
+            self.status = status
+
 
 class Attempt(models.Model):
     created_at = models.DateTimeField(
@@ -89,10 +127,17 @@ class Attempt(models.Model):
         verbose_name="Ответ почтового сервера"
     )
 
-    dispatch = models.ForeignKey(
+    mailing = models.ForeignKey(
         Dispatch,
         on_delete=models.SET_NULL,
         verbose_name="Рассылка",
         blank=True,
         null=True
     )
+
+    class Meta:
+        verbose_name = "Попытка рассылки"
+        verbose_name_plural = "Попытки рассылок"
+
+    def __str__(self):
+        return self.status

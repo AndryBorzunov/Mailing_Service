@@ -1,0 +1,24 @@
+{% extends 'mailing/base.html' %}
+{% load my_tags %}
+{% block content %}
+<div class="row text-center">
+    <div class="col-4">
+        <div class="card mb-4 box-shadow">
+            <div class="card-header">
+                <h4 class="my-0 font-weight-normal">{{ object.message }}</h4>
+            </div>
+            <div class="card-body">
+                <h4 class="card text">Сообщение: {{ object.message }}</h4>
+                <p class="card text">Дата создания карточки: {{ object.start_time }}</p>
+                <p class="card text">Дата редактирования карточки: {{ object.end_time }}</p>
+                <p class="card text">{{ object.status }}</p>
+                <p class="card text">{{ object.owner }}</p>
+                <p class="card text">{{ object.recipients.all }}</p>
+                <div class="btn-group">
+                    <a class="btn btn-lg btn-block btn-outline-primary" href="{% url 'mailing:dispatch_list' %}">Назад</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
