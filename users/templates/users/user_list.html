@@ -1,0 +1,33 @@
+{% extends 'mailing/base.html' %}
+{% load my_tags %}
+{% block content %}
+<div class="pricing-header px-3 py-3 pt-md-5 pb-md-4 mx-auto text-center">
+    <h1 class="display-4">Сервис рассылок</h1>
+    <p class="lead">Сервис рассылок - сервис для создания рассылок
+    </p>
+    {% if user.is_authenticated %}
+    <p class="lead">
+        <a class="btn btn-lg btn-block btn-outline-primary" href="{% url 'mailing:dispatch_create' %}">Создать рассылку</a>
+    </p>
+    {% endif %}
+
+</div>
+<div class="row text-center">
+    {% for item in object_list %}
+    <div class="col-4">
+        <div class="card mb-4 box-shadow">
+            <div class="card-header">
+                <h4 class="my-0 font-weight-normal">{{ item.email }}</h4>
+            </div>
+            <div class="card-body">
+                <h2 class="card-title pricing-card-title">{{ item.phone }}</h2>
+                <p class="card text">
+                    {{ item.country | truncatechars:100 }}
+                </p>
+
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

@@ -1,4 +1,4 @@
-import datetime
+from datetime import datetime
 
 from django.db import models
 
@@ -10,7 +10,6 @@ STATUS_CHOICES = [
     ("Created", "Создана"),
     ("Started", "Запущена")
 ]
-
 
 RESULT_CHOICES = [
     ("Successfully", "Успешно"),
@@ -34,6 +33,8 @@ class RecipientMail(models.Model):
         verbose_name="Комментарий",
         help_text="Напишите комментарий"
     )
+
+    owner = models.ForeignKey(User, verbose_name="Владелец", help_text="Укажите владельца подписчика", blank=True, null=True, on_delete=models.SET_NULL)
 
     class Meta:
         verbose_name = "Получатель рассылки"
@@ -91,22 +92,34 @@ class Dispatch(models.Model):
 
     owner = models.ForeignKey(User, verbose_name="Владелец", help_text="Укажите владельца рассылки", blank=True, null=True, on_delete=models.SET_NULL)
 
+    is_active = models.BooleanField(verbose_name="Признак активности", default=True)
+
     class Meta:
         verbose_name = "Рассылка"
         verbose_name_plural = "Рассылки"
+        ordering = ["start_time", "status"]
+        permissions = [
+            ("can_stop_dispatch", "can stop dispatch"),
+        ]
+
 
     def __str__(self):
         return self.status
 
     def update_status(self):
-        current_time = datetime.datetime.now()
+        time_zone = datetime.now().astimezone().tzinfo
+        print(time_zone)
+        current_time = datetime.now(time_zone).timestamp()
+        print(datetime.now(time_zone))
+        start_t = self.start_time.timestamp()
+        end_t = self.end_time.timestamp()
 
-        if self.start_time <= current_time <= self.end_time:
-            status = STATUS_CHOICES[2]
-        elif current_time > self.end_time:
-            status = STATUS_CHOICES[0]
+        if start_t <= current_time <= end_t:
+            status = STATUS_CHOICES[2][1]
+        elif current_time > end_t:
+            status = STATUS_CHOICES[0][1]
         else:
-            status = STATUS_CHOICES[1]
+            status = STATUS_CHOICES[1][1]
 
         if self.status != status:
             self.status = status
