@@ -9,15 +9,13 @@
                         {% csrf_token %}
                         {{ form.as_p }}
                     </div>
-                    {% if object %}
                     <button type="submit" class="btn btn-primary">
+                        {% if object %}
                         Сохранить
+                        {% else %}
+                        Создать
+                        {% endif %}
                     </button>
-                    {% else %}
-                    <button type="submit" class="btn btn-primary">
-                        Зарегистрироваться
-                    </button>
-                    {% endif %}
                 </div>
             </form>
         </div>

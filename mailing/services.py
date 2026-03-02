@@ -3,7 +3,7 @@ from django.core.cache import cache
 from django.core.mail import send_mail
 from config.settings import EMAIL_HOST_USER, CACHE_ENABLED
 
-from mailing.models import Dispatch, STATUS_CHOICES, Attempt, RESULT_CHOICES
+from mailing.models import Dispatch, Attempt
 
 def send_mailing(mailing_id):
     mailing = None
@@ -19,31 +19,40 @@ def send_mailing(mailing_id):
 
     # Проверка актуальности рассылки
     mailing.update_status()
-    print(mailing.status)
+    #print(mailing.status)
+    attempt = Attempt.objects.create(created_at=now(), status="Unsuccessfully", answer="",
+                                     mailing=mailing)
     if mailing.is_active and mailing.status == "Запущена":
-        recipient_list = []
-        for recipient in mailing.recipients.all():
-            recipient_list.append(recipient)
 
-        try:
-            result = send_mail(
-                subject=mailing.message.theme,
-                message=mailing.message.body,
-                from_email=EMAIL_HOST_USER,
-                recipient_list=recipient_list,
-                fail_silently=False
-            )
-            attempt = Attempt.objects.create(created_at=now(), status="Successfully", answer="",
-                                             mailing=mailing)
-            attempt.status = "Successfully"
-            print(f"Отправка ОК: {result} из {len(recipient_list)}")
-        except Exception as e:
-            attempt = Attempt.objects.create(created_at=now(), status="Unsuccessfully", answer=str(e),
-                                             mailing=mailing)
-            print(f"Ошибка отправки: {e}")
+        for recipient in mailing.recipients.all():
+
+            try:
+                send_mail(
+                    subject=mailing.message.theme,
+                    message=mailing.message.body,
+                    from_email=EMAIL_HOST_USER,
+                    recipient_list=[recipient],
+                    fail_silently=False
+                )
+
+                attempt.status = "Successfully"
+                attempt.save()
+            except Exception as e:
+                attempt.status = "Unsuccessfully"
+                attempt.answer = str(e)
+                print(f"Ошибка отправки: {e}")
+                raise e
 
     else:
         if not mailing.is_active:
-            print("Рассылка приостановлена")
+            #print("Рассылка приостановлена")
+            attempt.status = "Unsuccessfully"
+            attempt.answer = "Рассылка приостановлена"
+            attempt.save()
+            raise Exception("Рассылка приостановлена")
         else:
-            print(f"Рассылка {mailing.status}")
+            #print(f"Рассылка {mailing.status}")
+            attempt.status = "Unsuccessfully"
+            attempt.answer = f"Рассылка {mailing.status}"
+            attempt.save()
+            raise Exception(f"Рассылка {mailing.status}")

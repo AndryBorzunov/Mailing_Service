@@ -20,7 +20,14 @@
                 {% endfor %}
                 </p>
                 <div class="btn-group">
-                    <a class="btn btn-lg btn-block btn-outline-primary" href="{% url 'mailing:dispatch_list' %}">Назад</a>
+                    <form method="post" action="{% url 'mailing:process_command' %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="command" value="send_mailing">
+                        <input type="hidden" name="mailing_id" value="{{ object.pk }}">
+                        <button type="submit" class="btn btn-lg btn-block btn-outline-primary">Выполнить рассылку</button>
+                    </form>
+                    <a class="btn btn-lg btn-block btn-outline-primary"
+                       href="{% url 'mailing:dispatch_list' %}">Назад</a>
                 </div>
             </div>
         </div>

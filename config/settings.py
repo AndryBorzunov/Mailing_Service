@@ -143,7 +143,7 @@ MAX_SIZE = 5
 
 AUTH_USER_MODEL = "users.User"
 
-LOGIN_REDIRECT_URL = "/"
+LOGIN_REDIRECT_URL = "/mailings/"
 LOGOUT_REDIRECT_URL = "/"
 
 EMAIL_HOST = "smtp.yandex.ru"

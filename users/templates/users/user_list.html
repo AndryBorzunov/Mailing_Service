@@ -2,16 +2,9 @@
 {% load my_tags %}
 {% block content %}
 <div class="pricing-header px-3 py-3 pt-md-5 pb-md-4 mx-auto text-center">
-    <h1 class="display-4">Сервис рассылок</h1>
-    <p class="lead">Сервис рассылок - сервис для создания рассылок
-    </p>
-    {% if user.is_authenticated %}
-    <p class="lead">
-        <a class="btn btn-lg btn-block btn-outline-primary" href="{% url 'mailing:dispatch_create' %}">Создать рассылку</a>
-    </p>
-    {% endif %}
-
+    <h1 class="display-4">Пользователи</h1>
 </div>
+
 <div class="row text-center">
     {% for item in object_list %}
     <div class="col-4">
@@ -22,9 +15,15 @@
             <div class="card-body">
                 <h2 class="card-title pricing-card-title">{{ item.phone }}</h2>
                 <p class="card text">
-                    {{ item.country | truncatechars:100 }}
+                    {{ item.country | truncatechars:64 }}
                 </p>
-
+                {% if user.is_authenticated %}
+                <div class="btn-group">
+                    {% if perms.mailing.can_stop_dispatch %}
+                    <a class="btn btn-md btn-block btn-outline-primary" href="{% url 'users:user_profile_update' item.pk %}">Забанить</a>
+                    {% endif %}
+                </div>
+                {% endif %}
             </div>
         </div>
     </div>

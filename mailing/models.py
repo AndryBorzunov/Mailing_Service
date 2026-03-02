@@ -56,6 +56,9 @@ class Message(models.Model):
         help_text="Напишите сообщение"
     )
 
+    owner = models.ForeignKey(User, verbose_name="Владелец", help_text="Укажите владельца рассылки", blank=True,
+                              null=True, on_delete=models.SET_NULL)
+
     class Meta:
         verbose_name = "Сообщение"
         verbose_name_plural = "Сообщения"

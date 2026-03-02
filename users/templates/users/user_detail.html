@@ -1,0 +1,22 @@
+{% extends 'mailing/base.html' %}
+{% load my_tags %}
+{% block content %}
+<div class="row text-center">
+    <div class="col-4">
+        <div class="card mb-4 box-shadow">
+            <div class="card-header">
+                <h4 class="my-0 font-weight-normal">{{ current_user.email }}</h4>
+            </div>
+            <img src="{{ current_user.avatar | media_filter }}">
+            <div class="card-body">
+                <h4 class="card text">Телефон: {{ current_user.phone}}</h4>
+                <p class="card text">Страна: {{ current_user.country }}</p>
+                <div class="btn-group">
+                    <a class="btn btn-lg btn-block btn-outline-primary" href="{% url 'mailing:dispatch_list' %}">Назад</a>
+                    <a class="btn btn-lg btn-block btn-outline-primary" href="{% url 'users:user_profile_update' current_user.pk %}">Редактировать</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -3,7 +3,7 @@ import datetime
 from django.core.exceptions import ValidationError
 from django.forms import ModelForm, BooleanField
 
-from mailing.models import Dispatch
+from mailing.models import Dispatch, RecipientMail, Message
 
 
 class StyleFormMixin(ModelForm):
@@ -54,3 +54,28 @@ class DispatchForm(StyleFormMixin, ModelForm):
             if end_t.timestamp() < start_t.timestamp():
                 self.add_error("end_time","Время начала рассылки должно быть раньше времени окончания")
         return self.cleaned_data
+
+
+class DispatchModeratorForm(StyleFormMixin, ModelForm):
+
+    class Meta:
+        model = Dispatch
+        fields = ("is_active",)
+
+
+class RecipientMailForm(StyleFormMixin, ModelForm):
+
+    class Meta:
+        model = RecipientMail
+        exclude = (
+            "owner",
+        )
+
+
+class MessageForm(StyleFormMixin, ModelForm):
+
+    class Meta:
+        model = Message
+        exclude = (
+            "owner",
+        )

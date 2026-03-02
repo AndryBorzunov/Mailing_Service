@@ -27,10 +27,10 @@
                 {% if user.is_authenticated %}
                 <div class="btn-group">
                     <a class="btn btn-md btn-block btn-outline-primary" href="{% url 'mailing:dispatch_detail' dispatch.pk %}">Посмотреть</a>
-                    {% if perms.mailing.can_unpublish_product %}
+                    {% if perms.mailing.can_stop_dispatch or user == dispatch.owner %}
                     <a class="btn btn-md btn-block btn-outline-primary" href="{% url 'mailing:dispatch_update' dispatch.pk %}">Редактировать</a>
                     {% endif %}
-                    {% if perms.mailing.delete_product %}
+                    {% if user == dispatch.owner %}
                     <a class="btn btn-md btn-block btn-outline-primary" href="{% url 'mailing:dispatch_delete' dispatch.pk %}">Удалить</a>
                     {% endif %}
                 </div>
