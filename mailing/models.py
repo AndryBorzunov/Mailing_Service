@@ -4,17 +4,14 @@ from django.db import models
 
 from users.models import User
 
-
 STATUS_CHOICES = [
     ("Completed", "Завершена"),
     ("Created", "Создана"),
-    ("Started", "Запущена")
+    ("Started", "Запущена"),
 ]
 
-RESULT_CHOICES = [
-    ("Successfully", "Успешно"),
-    ("Unsuccessfully", "Неуспешно")
-]
+RESULT_CHOICES = [("Successfully", "Успешно"), ("Unsuccessfully", "Неуспешно")]
+
 
 class RecipientMail(models.Model):
     email_address = models.EmailField(
@@ -30,11 +27,17 @@ class RecipientMail(models.Model):
     )
 
     comment = models.TextField(
-        verbose_name="Комментарий",
-        help_text="Напишите комментарий"
+        verbose_name="Комментарий", help_text="Напишите комментарий"
     )
 
-    owner = models.ForeignKey(User, verbose_name="Владелец", help_text="Укажите владельца подписчика", blank=True, null=True, on_delete=models.SET_NULL)
+    owner = models.ForeignKey(
+        User,
+        verbose_name="Владелец",
+        help_text="Укажите владельца подписчика",
+        blank=True,
+        null=True,
+        on_delete=models.SET_NULL,
+    )
 
     class Meta:
         verbose_name = "Получатель рассылки"
@@ -46,18 +49,19 @@ class RecipientMail(models.Model):
 
 class Message(models.Model):
     theme = models.CharField(
-        max_length=64,
-        verbose_name="Тема письма",
-        help_text="Введите тему письма"
+        max_length=64, verbose_name="Тема письма", help_text="Введите тему письма"
     )
 
-    body = models.TextField(
-        verbose_name="Тело письма",
-        help_text="Напишите сообщение"
-    )
+    body = models.TextField(verbose_name="Тело письма", help_text="Напишите сообщение")
 
-    owner = models.ForeignKey(User, verbose_name="Владелец", help_text="Укажите владельца рассылки", blank=True,
-                              null=True, on_delete=models.SET_NULL)
+    owner = models.ForeignKey(
+        User,
+        verbose_name="Владелец",
+        help_text="Укажите владельца рассылки",
+        blank=True,
+        null=True,
+        on_delete=models.SET_NULL,
+    )
 
     class Meta:
         verbose_name = "Сообщение"
@@ -68,19 +72,11 @@ class Message(models.Model):
 
 
 class Dispatch(models.Model):
-    start_time = models.DateTimeField(
-        verbose_name="Дата и время первой отправки"
-    )
+    start_time = models.DateTimeField(verbose_name="Дата и время первой отправки")
 
-    end_time = models.DateTimeField(
-        verbose_name="Дата и время окончания отправки"
-    )
+    end_time = models.DateTimeField(verbose_name="Дата и время окончания отправки")
 
-    status = models.CharField(
-        max_length=10,
-        choices=STATUS_CHOICES,
-        default="Created"
-    )
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default="Created")
 
     message = models.ForeignKey(
         Message,
@@ -88,12 +84,19 @@ class Dispatch(models.Model):
         verbose_name="Сообщение",
         help_text="Выберите сообщение для рассылки",
         blank=True,
-        null=True
+        null=True,
     )
 
     recipients = models.ManyToManyField(RecipientMail)
 
-    owner = models.ForeignKey(User, verbose_name="Владелец", help_text="Укажите владельца рассылки", blank=True, null=True, on_delete=models.SET_NULL)
+    owner = models.ForeignKey(
+        User,
+        verbose_name="Владелец",
+        help_text="Укажите владельца рассылки",
+        blank=True,
+        null=True,
+        on_delete=models.SET_NULL,
+    )
 
     is_active = models.BooleanField(verbose_name="Признак активности", default=True)
 
@@ -104,7 +107,6 @@ class Dispatch(models.Model):
         permissions = [
             ("can_stop_dispatch", "can stop dispatch"),
         ]
-
 
     def __str__(self):
         return self.status
@@ -129,26 +131,20 @@ class Dispatch(models.Model):
 
 
 class Attempt(models.Model):
-    created_at = models.DateTimeField(
-        verbose_name="Дата и время попытки"
-    )
+    created_at = models.DateTimeField(verbose_name="Дата и время попытки")
 
     status = models.CharField(
-        max_length=16,
-        choices=RESULT_CHOICES,
-        default="Unsuccessfully"
+        max_length=16, choices=RESULT_CHOICES, default="Unsuccessfully"
     )
 
-    answer = models.TextField(
-        verbose_name="Ответ почтового сервера"
-    )
+    answer = models.TextField(verbose_name="Ответ почтового сервера")
 
     mailing = models.ForeignKey(
         Dispatch,
         on_delete=models.SET_NULL,
         verbose_name="Рассылка",
         blank=True,
-        null=True
+        null=True,
     )
 
     class Meta:

@@ -1,5 +1,5 @@
 from django.contrib.auth.forms import UserCreationForm
-from django.forms import ModelForm, BooleanField
+from django.forms import ModelForm
 
 from users.models import User
 
@@ -12,7 +12,7 @@ class UserRegisterForm(UserCreationForm):
 
 class UserProfileForm(ModelForm):
     def __init__(self, *args, **kwargs):
-        self.user = kwargs.pop('user', None)  # Получаем пользователя из kwargs
+        self.user = kwargs.pop("user", None)  # Получаем пользователя из kwargs
         super().__init__(*args, **kwargs)
 
     class Meta:
@@ -22,7 +22,7 @@ class UserProfileForm(ModelForm):
 
 class UserModeratorForm(ModelForm):
     def __init__(self, *args, **kwargs):
-        self.user = kwargs.pop('user', None)  # Получаем пользователя из kwargs
+        self.user = kwargs.pop("user", None)  # Получаем пользователя из kwargs
         super().__init__(*args, **kwargs)
 
     class Meta:

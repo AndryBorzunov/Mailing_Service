@@ -47,12 +47,15 @@ class DispatchForm(StyleFormMixin, ModelForm):
         end_t = cleaned_data.get("end_time")
 
         if start_t is None:
-            self.add_error("start_time","Error")
+            self.add_error("start_time", "Error")
         elif end_t is None:
             self.add_error("end_time", "Error")
         else:
             if end_t.timestamp() < start_t.timestamp():
-                self.add_error("end_time","Время начала рассылки должно быть раньше времени окончания")
+                self.add_error(
+                    "end_time",
+                    "Время начала рассылки должно быть раньше времени окончания",
+                )
         return self.cleaned_data
 
 
@@ -67,15 +70,11 @@ class RecipientMailForm(StyleFormMixin, ModelForm):
 
     class Meta:
         model = RecipientMail
-        exclude = (
-            "owner",
-        )
+        exclude = ("owner",)
 
 
 class MessageForm(StyleFormMixin, ModelForm):
 
     class Meta:
         model = Message
-        exclude = (
-            "owner",
-        )
+        exclude = ("owner",)

@@ -5,7 +5,12 @@ from django.core.exceptions import PermissionDenied
 from django.core.mail import send_mail
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse_lazy, reverse
-from django.views.generic import CreateView, ListView, DetailView, TemplateView, UpdateView
+from django.views.generic import (
+    CreateView,
+    ListView,
+    TemplateView,
+    UpdateView,
+)
 
 from users.forms import UserRegisterForm, UserProfileForm, UserModeratorForm
 from users.models import User
@@ -16,7 +21,7 @@ from config.settings import EMAIL_HOST_USER
 class UserCreateView(CreateView):
     model = User
     form_class = UserRegisterForm
-    success_url = reverse_lazy('users:login')
+    success_url = reverse_lazy("users:login")
 
     def form_valid(self, form):
         user = form.save()
@@ -25,12 +30,12 @@ class UserCreateView(CreateView):
         user.token = token
         user.save()
         host = self.request.get_host()
-        url = f'http://{host}/users/email-confirm/{token}'
+        url = f"http://{host}/users/email-confirm/{token}"
         send_mail(
             subject="Подтверждение почты",
             message=f"Привет, перейди по ссылке для подтверждения почты {url}",
             from_email=EMAIL_HOST_USER,
-            recipient_list=[user.email]
+            recipient_list=[user.email],
         )
         return super().form_valid(form)
 
@@ -44,8 +49,8 @@ def email_verification(request, token):
 
 class UserListView(ListView, LoginRequiredMixin):
     model = User
-    template_name = 'users/user_list.html'  # Укажите ваш шаблон
-    context_object_name = 'users'           # Имя переменной в шаблоне
+    template_name = "users/user_list.html"  # Укажите ваш шаблон
+    context_object_name = "users"  # Имя переменной в шаблоне
 
 
 # class UserDetailView(DetailView, LoginRequiredMixin):
@@ -55,11 +60,11 @@ class UserListView(ListView, LoginRequiredMixin):
 
 
 class ProfileView(LoginRequiredMixin, TemplateView):
-    template_name = 'users/user_detail.html'
+    template_name = "users/user_detail.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['current_user'] = self.request.user
+        context["current_user"] = self.request.user
         return context
 
 

@@ -2,11 +2,26 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import PermissionDenied
 from django.shortcuts import redirect
 from django.urls import reverse_lazy
-from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
+from django.views.generic import (
+    ListView,
+    DetailView,
+    CreateView,
+    UpdateView,
+    DeleteView,
+)
 
-from mailing.forms import DispatchForm, RecipientMailForm, MessageForm, DispatchModeratorForm
+from mailing.forms import (
+    DispatchForm,
+    RecipientMailForm,
+    MessageForm,
+    DispatchModeratorForm,
+)
 from mailing.models import Dispatch, RecipientMail, Message, Attempt
-from mailing.services import get_mailing_from_cache, get_mailings_from_cache, get_mailings_from_cache_owner, send_mailing
+from mailing.services import (
+    get_mailings_from_cache,
+    get_mailings_from_cache_owner,
+    send_mailing,
+)
 
 
 class MailingSummaryView(ListView):
@@ -18,10 +33,12 @@ class MailingSummaryView(ListView):
 
         # Собираем статистику
         context["dispatch_count"] = Dispatch.objects.count()
-        context["dispatch_active_count"] = Dispatch.objects.filter(status="Запущена").count()
+        context["dispatch_active_count"] = Dispatch.objects.filter(
+            status="Запущена"
+        ).count()
         context["recipient_mails_count"] = RecipientMail.objects.count()
 
-        return  context
+        return context
 
     def get_queryset(self):
         # Возвращаем пустой queryset, так как основной список не нужен
@@ -30,17 +47,17 @@ class MailingSummaryView(ListView):
 
 def process_command(request):
     if request.method == "POST":
-        command = request.POST.get('command')
-        mailing_id = request.POST.get('mailing_id')
+        command = request.POST.get("command")
+        mailing_id = request.POST.get("mailing_id")
 
-        if command == 'send_mailing' and mailing_id:
+        if command == "send_mailing" and mailing_id:
             try:
                 mailing_id = int(mailing_id)
                 send_mailing(mailing_id)
             except Exception as e:
-                print(f'Ошибка: {str(e)}')
+                print(f"Ошибка: {str(e)}")
 
-    return redirect('mailing:dispatch_list')
+    return redirect("mailing:dispatch_list")
 
 
 class DispatchListView(LoginRequiredMixin, ListView):
@@ -56,9 +73,9 @@ class DispatchListView(LoginRequiredMixin, ListView):
 class DispatchDetailView(DetailView):
     model = Dispatch
 
-    def get_object(self, queryset = None):
+    def get_object(self, queryset=None):
         obj = super().get_object(queryset)
-        obj.update_status() # пересчет и сохранение статуса
+        obj.update_status()  # пересчет и сохранение статуса
         obj.save()
         return obj
 
@@ -212,6 +229,6 @@ class AttemptListView(ListView, LoginRequiredMixin):
         if self.request.user.has_perm("mailing.can_stop_dispatch"):
             return Attempt.objects.all()
         else:
-            #attempts = Attempt.objects.all()
+            # attempts = Attempt.objects.all()
             mailings = Dispatch.objects.filter(owner=self.request.user)
             return Attempt.objects.filter(mailing__in=mailings)
