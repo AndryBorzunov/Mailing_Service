@@ -1,4 +1,5 @@
 from django.urls import path
+from django.views.decorators.cache import cache_page
 
 import mailing.views
 from mailing.apps import MailingConfig
@@ -16,7 +17,7 @@ urlpatterns = [
     path("mailings/", DispatchListView.as_view(), name='dispatch_list'),
     path(
         "mailing/<int:pk>/",
-        DispatchDetailView.as_view(),
+        cache_page(60)(DispatchDetailView.as_view()),
         name="dispatch_detail"
     ),
     path("dispatch/create/", DispatchCreateView.as_view(), name="dispatch_create"),
@@ -25,14 +26,14 @@ urlpatterns = [
     path("recipient_mails/", RecipientMailListView.as_view(), name="recipient_mails"),
     path(
         "recipientmail/<int:pk>/",
-        RecipientMailDetailView.as_view(),
+        cache_page(60)(RecipientMailDetailView.as_view()),
         name="recipientmail_detail"
     ),
     path("recipient_mails/create/", RecipientMailCreateView.as_view(), name="recipientmail_create"),
     path("recipientmail/<int:pk>/update/", RecipientMailUpdateView.as_view(), name="recipientmail_update"),
     path("recipientmail/<int:pk>/delete/", RecipientMailDeleteView.as_view(), name="recipientmail_delete"),
     path("messages/", MessageListView.as_view(), name="message_list"),
-    path("message/<int:pk>/", MessageDetailView.as_view(), name="message_detail"),
+    path("message/<int:pk>/", cache_page(60)(MessageDetailView.as_view()), name="message_detail"),
     path("message/create/", MessageCreateView.as_view(), name="message_create"),
     path("message/<int:pk>/update/", MessageUpdateView.as_view(), name="message_update"),
     path("message/<int:pk>/delete/", MessageDeleteView.as_view(), name="message_delete"),

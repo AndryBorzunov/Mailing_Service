@@ -4,6 +4,8 @@ from mailing.services import send_mailing
 
 
 class Command(BaseCommand):
+    help = 'Запускает рассылку'
+
     def add_arguments(self, parser):
         # Позиционный аргумент
         parser.add_argument('mailing_id', type=int)

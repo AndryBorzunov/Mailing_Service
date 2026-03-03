@@ -1,4 +1,3 @@
-from django.contrib import  messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import PermissionDenied
 from django.shortcuts import redirect
@@ -7,7 +6,7 @@ from django.views.generic import ListView, DetailView, CreateView, UpdateView, D
 
 from mailing.forms import DispatchForm, RecipientMailForm, MessageForm, DispatchModeratorForm
 from mailing.models import Dispatch, RecipientMail, Message, Attempt
-from mailing.services import send_mailing
+from mailing.services import get_mailing_from_cache, get_mailings_from_cache, get_mailings_from_cache_owner, send_mailing
 
 
 class MailingSummaryView(ListView):
@@ -38,10 +37,8 @@ def process_command(request):
             try:
                 mailing_id = int(mailing_id)
                 send_mailing(mailing_id)
-                #messages.success(request, 'Рассылка отправлена')
             except Exception as e:
                 print(f'Ошибка: {str(e)}')
-                messages.error(request, f'Ошибка: {str(e)}')
 
     return redirect('mailing:dispatch_list')
 
@@ -51,9 +48,9 @@ class DispatchListView(LoginRequiredMixin, ListView):
 
     def get_queryset(self):
         if self.request.user.has_perm("mailing.can_stop_dispatch"):
-            return Dispatch.objects.all()
+            return get_mailings_from_cache()
         else:
-            return Dispatch.objects.filter(owner=self.request.user)
+            return get_mailings_from_cache_owner(owner=self.request.user)
 
 
 class DispatchDetailView(DetailView):
@@ -118,16 +115,6 @@ class RecipientMailListView(ListView):
 
 class RecipientMailDetailView(DetailView, LoginRequiredMixin):
     model = RecipientMail
-
-    # def post(self, request, *args, **kwargs):
-    #     # Проверяем, какая кнопка была нажата
-    #     if 'action' in request.POST and request.POST['action'] == 'run_function':
-    #         result = self.my_custom_function()
-    #         # Передаём результат в контекст для отображения
-    #         context = self.get_context_data()
-    #         context['function_result'] = result
-    #         return render(request, self.template_name, context)
-    #     return super().get(request, *args, **kwargs)
 
 
 class RecipientMailCreateView(CreateView, LoginRequiredMixin):
