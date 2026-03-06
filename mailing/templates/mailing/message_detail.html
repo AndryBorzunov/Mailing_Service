@@ -1,0 +1,20 @@
+{% extends 'mailing/base.html' %}
+{% load my_tags %}
+{% block content %}
+<div class="row text-center">
+    <div class="col-4">
+        <div class="card mb-4 box-shadow">
+            <div class="card-header">
+                <h4 class="my-0 font-weight-normal">{{ object.theme }}</h4>
+            </div>
+            <div class="card-body">
+                <p class="card text">Сообщение: {{ object.body }}</p>
+                <p class="card text">Владелец: {{ object.owner }}</p>
+                <div class="btn-group">
+                    <a class="btn btn-lg btn-block btn-outline-primary" href="{% url 'mailing:message_list' %}">Назад</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

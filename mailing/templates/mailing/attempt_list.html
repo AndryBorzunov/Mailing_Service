@@ -1,0 +1,30 @@
+{% extends 'mailing/base.html' %}
+{% load my_tags %}
+{% block content %}
+<div class="pricing-header px-3 py-3 pt-md-5 pb-md-4 mx-auto text-center">
+    <h1 class="display-4">Таблица попыток запуска рассылок</h1>
+</div>
+
+<table class="table">
+    <thead>
+    <tr>
+        <th scope="col">№ пп</th>
+        <th scope="col">Время запуска</th>
+        <th scope="col">Статус</th>
+        <th scope="col">Сообщение сервера</th>
+        <th scope="col">Рассылка</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for attempt in object_list %}
+    <tr>
+        <th scope="row">{{ attempt.pk }}</th>
+        <td>{{ attempt.created_at }}</td>
+        <td>{{ attempt.status }}</td>
+        <td>{{ attempt.answer }}</td>
+        <td><a href="{% url 'mailing:dispatch_detail' attempt.mailing.pk %}"><strong>{{ attempt.mailing }}</strong></a></td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

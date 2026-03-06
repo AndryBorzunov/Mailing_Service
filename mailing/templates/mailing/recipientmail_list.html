@@ -1,0 +1,41 @@
+{% extends 'mailing/base.html' %}
+{% load my_tags %}
+{% block content %}
+<div class="pricing-header px-3 py-3 pt-md-5 pb-md-4 mx-auto text-center">
+    <h1 class="display-4">Получатели рассылок</h1>
+    {% if user.is_authenticated %}
+    <p class="lead">
+        <a class="btn btn-lg btn-block btn-outline-primary" href="{% url 'mailing:recipientmail_create' %}">Создать получателя рассылок</a>
+    </p>
+    {% endif %}
+
+</div>
+<div class="row text-center">
+    {% for recipient in object_list %}
+    <div class="col-4">
+        <div class="card mb-4 box-shadow">
+            <div class="card-header">
+                <h4 class="my-0 font-weight-normal">{{ recipient.email_address }}</h4>
+            </div>
+            <div class="card-body">
+                <h2 class="card-title pricing-card-title">{{ recipient.name_fio }}</h2>
+                <p class="card text">
+                    {{ recipient.comment | truncatechars:100 }}
+                </p>
+                {% if user.is_authenticated %}
+                <div class="btn-group">
+                    <a class="btn btn-md btn-block btn-outline-primary" href="{% url 'mailing:recipientmail_detail' recipient.pk %}">Посмотреть</a>
+                    {% if user == recipient.owner %}
+                    <a class="btn btn-md btn-block btn-outline-primary" href="{% url 'mailing:recipientmail_update' recipient.pk %}">Редактировать</a>
+                    {% endif %}
+                    {% if user == recipient.owner %}
+                    <a class="btn btn-md btn-block btn-outline-primary" href="{% url 'mailing:recipientmail_delete' recipient.pk %}">Удалить</a>
+                    {% endif %}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

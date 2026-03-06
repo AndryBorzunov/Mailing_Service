@@ -1,0 +1,23 @@
+{% extends 'mailing/base.html' %}
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-6">
+            <form class="row" method="post" enctype="multipart/form-data">
+                <div class="card">
+                    <p class="card text">
+                        Действительно хотите удалить {{ object.name }}?
+                    </p>
+                    <div class="card-body">
+                        {% csrf_token %}
+                    </div>
+                    <div class="btn-group">
+                        <button type="submit" class="btn btn-lg btn-block btn-outline-primary">Удалить</button>
+                        <a class="btn btn-lg btn-block btn-outline-primary" href="{% url 'mailing:dispatch_list'%}">Отменить</a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

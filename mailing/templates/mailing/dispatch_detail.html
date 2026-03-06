@@ -1,0 +1,36 @@
+{% extends 'mailing/base.html' %}
+{% load my_tags %}
+{% block content %}
+<div class="row text-center">
+    <div class="col-4">
+        <div class="card mb-4 box-shadow">
+            <div class="card-header">
+                <h4 class="my-0 font-weight-normal">{{ object.message.theme }}</h4>
+            </div>
+            <div class="card-body">
+                <h4 class="card text">Сообщение: {{ object.message.body }}</h4>
+                <p class="card text">Начало рассылки: {{ object.start_time }}</p>
+                <p class="card text">Окончание рассылки: {{ object.end_time }}</p>
+                <p class="card text">Состояние: {{ object.status }}</p>
+                <p class="card text">{{ object.owner }}</p>
+                <p class="card text">
+                    Подписчики:
+                {% for recipient in object.recipients.all %}
+                {{ recipient.email_address }},
+                {% endfor %}
+                </p>
+                <div class="btn-group">
+                    <form method="post" action="{% url 'mailing:process_command' %}">
+                        {% csrf_token %}
+                        <input type="hidden" name="command" value="send_mailing">
+                        <input type="hidden" name="mailing_id" value="{{ object.pk }}">
+                        <button type="submit" class="btn btn-lg btn-block btn-outline-primary">Выполнить рассылку</button>
+                    </form>
+                    <a class="btn btn-lg btn-block btn-outline-primary"
+                       href="{% url 'mailing:dispatch_list' %}">Назад</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
