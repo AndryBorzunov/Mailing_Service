@@ -63,7 +63,7 @@ jobs:
         env:
           DATABASE_URL: "postgresql://testuser:testpass@localhost:5432/testdb"
           DJANGO_SETTINGS_MODULE: "config.settings"
-        run: poetry run pyton manage.py migrate --noinput
+        run: poetry run python manage.py migrate --noinput
 
       - name: Run tests
         env:
