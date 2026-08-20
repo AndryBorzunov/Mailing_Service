@@ -111,7 +111,7 @@ jobs:
         run: docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/mailing-service:${{ github.sha }} .
 
       - name: Push Docker image in Docker hub
-        run: docker push ${{ secrets.DOCKER_HUB_USERNAME }}/mailing-service:${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+        run: docker push ${{ secrets.DOCKER_HUB_USERNAME }}/mailing-service:${{ github.sha }}
 
   deploy:
     needs: build
