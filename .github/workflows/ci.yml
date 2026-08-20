@@ -37,10 +37,10 @@ jobs:
         ports:
           - 5432:5432
         options: >-
-          --health-cmd "pg_isready -U testuser -d testdb"
-          --health-interval 5s
-          --health-timeout 5s
-          --health-retries 15
+          --health-cmd=pg_isready
+          --health-interval=5s
+          --health-timeout=5s
+          --health-retries=15
 
     steps:
       - name: Check out code
@@ -50,6 +50,9 @@ jobs:
         uses: actions/setup-python@v4
         with:
           python-version: '3.10'
+
+      - name: Install PostgreSQL client (для pg_isready)
+        run: sudo apt-get update && sudo apt-get install -y postgresql-client
 
       - name: Install Poetry
         run: |
@@ -70,7 +73,7 @@ jobs:
       - name: Wait for DB
         run: |
           for i in {1..40}; do
-            if pg_isready -h localhost -U testuser -d testdb; then
+            if pg_isready -h postgres -U testuser -d testdb; then
               echo "DB ready"
               exit 0
             fi
@@ -81,14 +84,14 @@ jobs:
 
       - name: Run migrations
         env:
-          DATABASE_URL: "postgresql://testuser:testpass@localhost:5432/testdb"
+          DATABASE_URL: "postgresql://testuser:testpass@postgres:5432/testdb"
           DJANGO_SETTINGS_MODULE: "config.settings"
           SECRET_KEY: "ci-not-a-real-secret"
         run: poetry run python manage.py migrate --noinput --verbosity=2
 
       - name: Run tests
         env:
-          DATABASE_URL: "postgresql://testuser:testpass@localhost:5432/testdb"
+          DATABASE_URL: "postgresql://testuser:testpass@postgres:5432/testdb"
           DJANGO_SETTINGS_MODULE: "config.settings"
           SECRET_KEY: "ci-not-a-real-secret"
         run: poetry run python manage.py test
