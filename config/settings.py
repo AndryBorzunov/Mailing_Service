@@ -85,8 +85,8 @@ if os.getenv("GITHUB_ACTIONS") == "true":
         "default": {
             "ENGINE": "django.db.backends.postgresql",
             "NAME": "testdb",
-            "USER": "testuser",
-            "PASSWORD": "testpass",
+            "USER": "postgres",
+            "PASSWORD": "postgres",
             "HOST": "postgres",          # важно: имя сервиса, не localhost
             "PORT": "5432",
             # Явно запрещаем сокет и форсируем TCP
