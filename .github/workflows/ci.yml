@@ -54,7 +54,7 @@ jobs:
       - name: Install Poetry
         run: |
           curl -sSL https://install.python-poetry.org | python3 -
-          echo "$HOME/.local.bin" >> $GITHUB_PATH
+          echo "$HOME/.local/bin" >> $GITHUB_PATH
       - name: Install dependencies
         run: |
           poetry install --no-root
@@ -63,7 +63,7 @@ jobs:
         env:
           DATABASE_URL: "postgresql://testuser:testpass@localhost:5432/testdb"
           DJANGO_SETTINGS_MODULE: "Mailing_Service.settings"
-        run: pyton manage.py migrate --noinput
+        run: poetry run pyton manage.py migrate --noinput
 
       - name: Run tests
         env:
