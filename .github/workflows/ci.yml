@@ -37,10 +37,10 @@ jobs:
         ports:
           - 5432:5432
         options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
+          --health-cmd pg_isready -U testuser -d testdb
+          --health-interval 5s
           --health-timeout 5s
-          --health-retries 10
+          --health-retries 15
 
     steps:
       - name: Check out code
@@ -55,21 +55,41 @@ jobs:
         run: |
           curl -sSL https://install.python-poetry.org | python3 -
           echo "$HOME/.local/bin" >> $GITHUB_PATH
+
+      - name: Cache Poetry venv
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/pypoetry/virtualenvs
+          key: poetry-venv-${{ runner.os }}-3.12-${{ hashFiles('**/pyproject.toml', '**/poetry.lock') }}
+
       - name: Install dependencies
         run: |
           poetry install --no-root
 
+      # Явная проверка готовности БД
+      - name: Wait for DB
+        run: |
+          for i in {1..40}; do
+            if pg_isready -h localhost -U testuser -d testdb; then
+              echo "DB ready"
+              exit 0
+            fi
+            sleep 2
+          done
+          echo "DB never became ready"
+          exit 1
+
       - name: Run migrations
         env:
           DATABASE_URL: "postgresql://testuser:testpass@localhost:5432/testdb"
-          DJANGO_SETTINGS_MODULE: "Mailing_Service.config.settings"
+          DJANGO_SETTINGS_MODULE: "config.settings"
           SECRET_KEY: "ci-not-a-real-secret"
-        run: poetry run python manage.py migrate --noinput
+        run: poetry run python manage.py migrate --noinput --verbosity=2
 
       - name: Run tests
         env:
           DATABASE_URL: "postgresql://testuser:testpass@localhost:5432/testdb"
-          DJANGO_SETTINGS_MODULE: "Mailing_Service.config.settings"
+          DJANGO_SETTINGS_MODULE: "config.settings"
           SECRET_KEY: "ci-not-a-real-secret"
         run: poetry run python manage.py test
 
