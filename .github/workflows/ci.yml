@@ -62,14 +62,14 @@ jobs:
       - name: Run migrations
         env:
           DATABASE_URL: "postgresql://testuser:testpass@localhost:5432/testdb"
-          DJANGO_SETTINGS_MODULE: "Mailing_Service.settings"
+          DJANGO_SETTINGS_MODULE: "Mailing_Service.config.settings"
           SECRET_KEY: "ci-not-a-real-secret"
         run: poetry run python manage.py migrate --noinput
 
       - name: Run tests
         env:
           DATABASE_URL: "postgresql://testuser:testpass@localhost:5432/testdb"
-          DJANGO_SETTINGS_MODULE: "Mailing_Service.settings"
+          DJANGO_SETTINGS_MODULE: "Mailing_Service.config.settings"
           SECRET_KEY: "ci-not-a-real-secret"
         run: poetry run python manage.py test
 
