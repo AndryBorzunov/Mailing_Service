@@ -108,10 +108,10 @@ jobs:
         run: echo ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }} | docker login -u ${{ secrets.DOCKER_HUB_USERNAME }} --password-stdin
 
       - name: Build Docker image
-        run: docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/Mailing_Service:${{ github.sha }} .
+        run: docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/mailing-service:${{ github.sha }} .
 
       - name: Push Docker image in Docker hub
-        run: docker push ${{ secrets.DOCKER_HUB_USERNAME }}/Mailing_Service:${{ github.sha }}
+        run: docker push ${{ secrets.DOCKER_HUB_USERNAME }}/mailing-service:${{ github.sha }}
 
   deploy:
     needs: build
@@ -126,8 +126,8 @@ jobs:
       - name: Deploy to server
         run: |
           ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
-          docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/Mailing_Service:${{ github.sha }}
-          docker stop Mailing_Service || true
-          docker rm Mailing_Service || true
-          docker run -d --name Mailing_Service -p 80:8000 ${{ secrets.DOCKER_HUB_USERNAME }}/Mailing_Service:${{ github.sha }}
+          docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/mailing-service:${{ github.sha }}
+          docker stop mailing-service || true
+          docker rm mailing-service || true
+          docker run -d --name mailing-service -p 80:8000 ${{ secrets.DOCKER_HUB_USERNAME }}/Mailing_Service:${{ github.sha }}
           EOF
