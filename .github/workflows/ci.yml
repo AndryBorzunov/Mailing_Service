@@ -84,14 +84,14 @@ jobs:
 
       - name: Run migrations
         env:
-          DATABASE_URL: "postgresql://testuser:testpass@loclhost:5432/testdb"
+          DATABASE_URL: "postgresql://testuser:testpass@postgres:5432/testdb"
           DJANGO_SETTINGS_MODULE: "config.settings"
           SECRET_KEY: "ci-not-a-real-secret"
         run: poetry run python manage.py migrate --noinput --verbosity=2
 
       - name: Run tests
         env:
-          DATABASE_URL: "postgresql://testuser:testpass@loclhost:5432/testdb"
+          DATABASE_URL: "postgresql://testuser:testpass@postgres:5432/testdb"
           DJANGO_SETTINGS_MODULE: "config.settings"
           SECRET_KEY: "ci-not-a-real-secret"
         run: poetry run python manage.py test
