@@ -129,7 +129,7 @@ jobs:
           DJANGO_SETTINGS_MODULE: "config.settings"
           SECRET_KEY: ${{ secrets.DJANGO_SECRET_KEY }}
         run: |
-          IMAGE="***/mailing-service:${{ github.sha }}"
+          IMAGE="${{ secrets.DOCKER_HUB_USERNAME }}/mailing-service:${{ github.sha }}"
           
           ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
             # 1. Скачиваем образ
