@@ -125,13 +125,17 @@ jobs:
 
       - name: Deploy to server
         env:
+          IMAGE: "${{ secrets.DOCKER_HUB_USERNAME }}/mailing-service:${{ github.sha }}"
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
           DJANGO_SETTINGS_MODULE: "config.settings"
           SECRET_KEY: ${{ secrets.DJANGO_SECRET_KEY }}
         run: |
-          IMAGE="${{ secrets.DOCKER_HUB_USERNAME }}/mailing-service:${{ github.sha }}"
-          
           ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
+
+            # Переменные берутся из окружения SSH-сессии (они были переданы через env в шаге)
+            export IMAGE="${IMAGE}"
+            export SECRET_KEY="${SECRET_KEY}"
+            export DATABASE_URL="${DATABASE_URL}"
             # 1. Скачиваем образ
             sudo docker pull "$IMAGE"
           
