@@ -129,5 +129,5 @@ jobs:
           docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/mailing-service:${{ github.sha }}
           docker stop mailing-service || true
           docker rm mailing-service || true
-          docker run -d --name mailing-service -p 80:8000 ${{ secrets.DOCKER_HUB_USERNAME }}/Mailing_Service:${{ github.sha }}
+          docker run -d --name mailing-service -p 80:8000 ${{ secrets.DOCKER_HUB_USERNAME }}/mailing-service:${{ github.sha }}
           EOF
