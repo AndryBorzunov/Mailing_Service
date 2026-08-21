@@ -131,13 +131,12 @@ jobs:
           SECRET_KEY: ${{ secrets.DJANGO_SECRET_KEY }}
         run: |
           ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
-
             # Переменные берутся из окружения SSH-сессии (они были переданы через env в шаге)
             export IMAGE="${IMAGE}"
             export SECRET_KEY="${SECRET_KEY}"
             export DATABASE_URL="${DATABASE_URL}"
             # 1. Скачиваем образ
-            sudo docker pull "$IMAGE"
+            sudo docker pull $IMAGE
           
             # 2. Останавливаем и удаляем старый контейнер (если есть)
             sudo docker stop mailing-service || true
@@ -147,7 +146,7 @@ jobs:
             sudo docker run --rm \
               -e "SECRET_KEY=$SECRET_KEY" \
               -e "DATABASE_URL=$DATABASE_URL" \
-              "$IMAGE" \
+              $IMAGE \
               python manage.py migrate --noinput
           
             # 4. Запускаем веб‑контейнер с автоперезапуском и переменными
@@ -157,5 +156,5 @@ jobs:
               -p 80:8000 \
               -e "SECRET_KEY=$SECRET_KEY" \
               -e "DATABASE_URL=$DATABASE_URL" \
-              "$IMAGE"
+              $IMAGE
           EOF
