@@ -124,10 +124,34 @@ jobs:
           ssh-private-key: ${{ secrets.SSH_KEY }}
 
       - name: Deploy to server
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          DJANGO_SETTINGS_MODULE: "config.settings"
+          SECRET_KEY: ${{ secrets.DJANGO_SECRET_KEY }}
         run: |
+          IMAGE="***/mailing-service:${{ github.sha }}"
+          
           ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
-          docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/mailing-service:${{ github.sha }}
-          docker stop mailing-service || true
-          docker rm mailing-service || true
-          docker run -d --name mailing-service -p 80:8000 ${{ secrets.DOCKER_HUB_USERNAME }}/mailing-service:${{ github.sha }}
+            # 1. Скачиваем образ
+            sudo docker pull "$IMAGE"
+          
+            # 2. Останавливаем и удаляем старый контейнер (если есть)
+            sudo docker stop mailing-service || true
+            sudo docker rm mailing-service || true
+          
+            # 3. Запускаем миграции (одноразовый контейнер)
+            sudo docker run --rm \
+              -e "SECRET_KEY=$SECRET_KEY" \
+              -e "DATABASE_URL=$DATABASE_URL" \
+              "$IMAGE" \
+              python manage.py migrate --noinput
+          
+            # 4. Запускаем веб‑контейнер с автоперезапуском и переменными
+            sudo docker run -d \
+              --name mailing-service \
+              --restart unless-stopped \
+              -p 80:8000 \
+              -e "SECRET_KEY=$SECRET_KEY" \
+              -e "DATABASE_URL=$DATABASE_URL" \
+              "$IMAGE"
           EOF
