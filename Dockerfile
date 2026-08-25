@@ -30,10 +30,7 @@ RUN poetry config virtualenvs.create false \
     && poetry install --no-root
 
 # Копируем остальной код проекта
-COPY . /app
-
-# Копируем весь код
-# COPY .
+COPY . .
 
 # Настраиваем переменные окружения
 ENV PYTHONDONTWRITEBYTECODE 1
@@ -45,6 +42,7 @@ RUN chmod +x /app/entrypoint.sh
 
 # Определяем точку входа для контейнера
 ENTRYPOINT ["/app/entrypoint.sh"].
+CMD ["poetry", "run", "gunicorn", "-c", "gunicorn.conf.py", "config.wsgi:application"]
 
 # Открываем порт дл Django
 # EXPOSE 8000
