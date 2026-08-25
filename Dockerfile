@@ -23,11 +23,11 @@ ENV PATH="/root/.local/bin:$PATH"
 COPY pyproject.toml poetry.lock ./
 
 # Устанавливаем зависимости. Для продакшена используем `--no-dev`, чтобы не тащить инструменты разработки
-RUN poetry install --no-dev
+# RUN poetry install --no-dev
 
 # Создаем venv внутри образа и ставим зависимости (без dev дл production-образа)
-# RUN poetry config virtualenvs.create false \
-#     && poetry install --no-root
+RUN poetry config virtualenvs.create false \
+    && poetry install --no-root
 
 # Копируем остальной код проекта
 COPY . /app
