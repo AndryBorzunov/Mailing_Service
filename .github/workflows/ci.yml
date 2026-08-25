@@ -132,6 +132,6 @@ jobs:
           docker run -d \
             --name mailing-service \
             --restart unless-stopped \
-            -p 80:8000 \
+            -p 8000:8000 \
             ${{ secrets.DOCKER_HUB_USERNAME }}/mailing-service:${{ github.sha }}
           EOF
