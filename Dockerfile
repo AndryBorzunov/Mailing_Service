@@ -11,7 +11,7 @@ WORKDIR /app
 RUN apt-get update && apt-get install -y --no-install-recommends \
     curl \
     build-essential \
-    libpq-dev \  # если используете PostgreSQL
+    libpq-dev \
     gcc \
     && rm -rf /var/lib/apt/lists/*
 
