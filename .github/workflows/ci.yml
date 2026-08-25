@@ -128,13 +128,16 @@ jobs:
           IMAGE_TAG: "${{ github.sha }}"
         run: |
           ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SERVER_IP }} << 'EOF'
-            cd /var/www/mailing-service
+            cd /var/www/mailing-service/app
+            git pull origin feature/kurswork_4_1
 
+            cd ..
             # Обновляем образ (если build зависит от внешних факторов — можно убрать build)
-            sudo docker compose pull
+            # Пересобрать образ, чтобы точно взять свежие файлы
+            sudo docker compose build --no-cache --pull
 
             # Применяем миграции (запускается entrypoint.sh с командой migrate)
-            sudo docker compose run --rm web
+            sudo docker compose run --rm web poetry run python manage.py migrate --noinput
 
             # Поднимаем все сервисы
             sudo docker compose up -d --remove-orphans

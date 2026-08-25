@@ -17,7 +17,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 # Устанавливаем Poetry
 RUN curl -sSL https://install.python-poetry.org | python3 -
-ENV PATH="/root/.local/bin:$PATH"
+#ENV PATH="/root/.local/bin:$PATH"
 
 # Копируем фалы зависимостей
 COPY pyproject.toml poetry.lock ./
@@ -37,11 +37,11 @@ ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 
 # Точка входа (entrypoint.sh) — скрипт, который определит, что запускать
-COPY entrypoint.sh /app/entrypoint.sh
-RUN chmod +x /app/entrypoint.sh
+#COPY entrypoint.sh /app/entrypoint.sh
+#RUN chmod +x /app/entrypoint.sh
 
 # Определяем точку входа для контейнера
-ENTRYPOINT ["/app/entrypoint.sh"].
+#ENTRYPOINT ["/app/entrypoint.sh"].
 CMD ["poetry", "run", "gunicorn", "-c", "gunicorn.conf.py", "config.wsgi:application"]
 
 # Открываем порт дл Django
