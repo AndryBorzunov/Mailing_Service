@@ -17,7 +17,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 # Устанавливаем Poetry
 RUN curl -sSL https://install.python-poetry.org | python3 -
-#ENV PATH="/root/.local/bin:$PATH"
+ENV PATH="/root/.local/bin:$PATH"
 
 # Копируем фалы зависимостей
 COPY pyproject.toml poetry.lock ./
@@ -28,6 +28,9 @@ COPY pyproject.toml poetry.lock ./
 # Создаем venv внутри образа и ставим зависимости (без dev дл production-образа)
 RUN poetry config virtualenvs.create false \
     && poetry install --no-root
+
+#RUN poetry config virtualenvs.create false \
+#    && poetry install --no-dev --no-interaction
 
 # Копируем остальной код проекта
 COPY . .
