@@ -28,7 +28,7 @@ jobs:
     runs-on: ubuntu-latest
 
     services:
-      postgres:
+      db:
         image: postgres:15
         env:
           POSTGRES_USER: andry
@@ -37,10 +37,15 @@ jobs:
         ports:
           - 5432:5432
         options: >-
-          --health-cmd "pg_isready -U andry"
+          --health-cmd pg_isready
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
+
+    env:
+      DATABASE_URL: "postgresql://andry:12345@localhost:5432/testdb"
+      # DJANGO_SETTINGS_MODULE: "config.settings"
+      SECRET_KEY: "ci-not-a-real-secret"
 
     steps:
       - name: Check out code
@@ -83,17 +88,9 @@ jobs:
           exit 1
 
       - name: Run migrations
-        env:
-          DATABASE_URL: "postgresql://postgres:postgres@localhost:5432/testdb"
-          DJANGO_SETTINGS_MODULE: "config.settings"
-          SECRET_KEY: "ci-not-a-real-secret"
         run: poetry run python manage.py migrate --noinput --verbosity=2
 
       - name: Run tests
-        env:
-          DATABASE_URL: "postgresql://postgres:postgres@localhost:5432/testdb"
-          DJANGO_SETTINGS_MODULE: "config.settings"
-          SECRET_KEY: "ci-not-a-real-secret"
         run: poetry run python manage.py test
 
   build:

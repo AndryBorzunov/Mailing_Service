@@ -80,30 +80,17 @@ WSGI_APPLICATION = "config.wsgi.application"
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
 # Для локального запуска можно оставить как было, а для CI — жёстко задать
-if os.getenv("GITHUB_ACTIONS") == "true":
-    DATABASES = {
-        "default": {
-            "ENGINE": "django.db.backends.postgresql",
-            "NAME": "testdb",
-            "USER": "andry",
-            "PASSWORD": "12345",
-            "HOST": "127.0.0.1",         # важно: имя сервиса, не localhost
-            "PORT": "5432",
-            # Явно запрещаем сокет и форсируем TCP
-            "OPTIONS": {},
-        }
+
+DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.postgresql_psycopg2",
+        "NAME": "testdb",
+        "USER": "andry",
+        "PASSWORD": "12345",
+        "HOST": os.getenv("DB_HOST"),
+        "PORT": os.getenv("PORT"),
     }
-else:
-    DATABASES = {
-        "default": {
-            "ENGINE": "django.db.backends.postgresql_psycopg2",
-            "NAME": os.getenv("DB_NAME"),
-            "USER": "andry",
-            "PASSWORD": "12345",
-            "HOST": os.getenv("DB_HOST"),
-            "PORT": os.getenv("PORT"),
-        }
-    }
+}
 
 
 # Password validation
