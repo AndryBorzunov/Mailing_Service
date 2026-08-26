@@ -87,7 +87,7 @@ if os.getenv("GITHUB_ACTIONS") == "true":
             "NAME": "testdb",
             "USER": "andry",
             "PASSWORD": "12345",
-            "HOST": os.getenv("HOST"),         # важно: имя сервиса, не localhost
+            "HOST": "127.0.0.1",         # важно: имя сервиса, не localhost
             "PORT": "5432",
             # Явно запрещаем сокет и форсируем TCP
             "OPTIONS": {},
