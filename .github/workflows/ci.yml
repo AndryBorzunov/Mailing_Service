@@ -43,7 +43,7 @@ jobs:
           --health-retries 5
 
     env:
-      DATABASE_URL: "postgresql://andry:12345@localhost:5432/testdb"
+      DATABASE_URL: "postgresql://postgres:postgres@localhost:5432/testdb"
       # DJANGO_SETTINGS_MODULE: "config.settings"
       SECRET_KEY: "ci-not-a-real-secret"
 
