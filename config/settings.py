@@ -97,10 +97,10 @@ else:
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.postgresql_psycopg2",
-            "NAME": os.getenv("NAMEDB"),
+            "NAME": os.getenv("DB_NAME"),
             "USER": "andry",
             "PASSWORD": "12345",
-            "HOST": os.getenv("HOST"),
+            "HOST": os.getenv("DB_HOST"),
             "PORT": os.getenv("PORT"),
         }
     }
