@@ -83,14 +83,18 @@ WSGI_APPLICATION = "config.wsgi.application"
 
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.postgresql",  # не postgresql_psycopg2
-        "NAME": os.environ["DB_NAME"],             # не хардкод
-        "USER": os.environ["DB_USER"],             # не хардкод
-        "PASSWORD": os.environ["DB_PASSWORD"],     # не хардкод
-        "HOST": os.environ.get("DB_HOST", "db"),   # дефолт db
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": os.environ.get("DB_NAME"),
+        "USER": os.environ.get("DB_USER"),
+        "PASSWORD": os.environ.get("DB_PASSWORD"),
+        "HOST": os.environ.get("DB_HOST", "localhost"),  # в CI с services хост всегда localhost
         "PORT": int(os.environ.get("PORT", 5432)),
     }
 }
+
+# Проверка, чтобы понять, чего не хватает, а не молча падать
+if not all([os.environ.get(k) for k in ["DB_NAME", "DB_USER", "DB_PASSWORD"]]):
+    raise RuntimeError("Не заданы переменные DB_NAME/DB_USER/DB_PASSWORD")
 
 
 # Password validation
