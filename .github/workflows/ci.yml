@@ -125,7 +125,7 @@ jobs:
         with:
           ssh-private-key: ${{ secrets.SSH_KEY }}
 
-      - name: Deploy with docker compose
+      - name: Deploy with docker compos
         env:
           IMAGE_TAG: "${{ github.sha }}"
         run: |
