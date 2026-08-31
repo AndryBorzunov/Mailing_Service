@@ -9,7 +9,7 @@ from django.views.generic import (
     UpdateView,
     DeleteView,
 )
-from  django.http import JsonResponse
+from django.http import JsonResponse
 
 from mailing.forms import (
     DispatchForm,
