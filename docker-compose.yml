@@ -12,7 +12,7 @@ services:
       - DB_USER=${DB_USER}
       - DB_PASSWORD=${DB_PASSWORD}
     volumes:
-      - .:/app        # <-- точка — это корень проекта, где лежит manage.py
+      - ./app:/app        # <-- точка — это корень проекта, где лежит manage.py
     working_dir: /app   # <-- важно: чтобы manage.py был в текущей директории
     expose:
       - "8000"
