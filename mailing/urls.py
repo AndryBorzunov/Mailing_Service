@@ -22,6 +22,7 @@ from mailing.views import (
     MessageDeleteView,
     AttemptListView,
 )
+from . import views
 
 app_name = MailingConfig.name
 
@@ -81,4 +82,5 @@ urlpatterns = [
         "message/<int:pk>/delete/", MessageDeleteView.as_view(), name="message_delete"
     ),
     path("attempts/", AttemptListView.as_view(), name="attempt_list"),
+    path('health/', views.health, name='health'),
 ]

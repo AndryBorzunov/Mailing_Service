@@ -9,6 +9,7 @@ from django.views.generic import (
     UpdateView,
     DeleteView,
 )
+from  django.http import JsonResponse
 
 from mailing.forms import (
     DispatchForm,
@@ -58,6 +59,10 @@ def process_command(request):
                 print(f"Ошибка: {str(e)}")
 
     return redirect("mailing:dispatch_list")
+
+
+def health(request):
+    return JsonResponse({"status": "ok", "service": "mailing-service"})
 
 
 class DispatchListView(LoginRequiredMixin, ListView):
