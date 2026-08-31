@@ -1,8 +1,6 @@
-version: '3.8'
-
 services:
   web:
-    build: ./app
+    build: .
     command: poetry run gunicorn -c gunicorn.conf.py config.wsgi:application
     restart: unless-stopped
     environment:
@@ -13,6 +11,9 @@ services:
       - DB_NAME=${DB_NAME}
       - DB_USER=${DB_USER}
       - DB_PASSWORD=${DB_PASSWORD}
+    volumes:
+      - .:/app        # <-- точка — это корень проекта, где лежит manage.py
+    working_dir: /app   # <-- важно: чтобы manage.py был в текущей директории
     expose:
       - "8000"
     depends_on:
@@ -32,7 +33,7 @@ services:
       POSTGRES_USER: ${DB_USER}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
     volumes:
-      - ./postgres/data:/var/lib/postgresql/data
+      - postgres_data:/var/lib/postgresql/data
     ports:
       - "5432:5432"  # можно убрать, если доступ только из контейнеров
     healthcheck:
