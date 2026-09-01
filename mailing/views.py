@@ -9,6 +9,7 @@ from django.views.generic import (
     UpdateView,
     DeleteView,
 )
+from django.views import View
 from django.http import JsonResponse
 
 from mailing.forms import (
@@ -61,8 +62,9 @@ def process_command(request):
     return redirect("mailing:dispatch_list")
 
 
-def health(request):
-    return JsonResponse({"status": "ok", "service": "mailing-service"})
+class HealthView(View):
+    def get(self, request, *args, **kwargs):
+        return JsonResponse({"status": "ok", "service": "mailing-service"})
 
 
 class DispatchListView(LoginRequiredMixin, ListView):
